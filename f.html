@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <style>
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+    }
+
+    .square {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .white {
+      background-color: #f0d9b5;
+    }
+
+    .black {
+      background-color: #b58863;
+    }
+
+    .piece {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .piece.white {
+      color: #000;
+    }
+
+    .rook::before {
+      content: '♖';
+    }
+
+    .knight::before {
+      content: '♘';
+    }
+
+    .bishop::before {
+      content: '♗';
+    }
+
+    .queen::before {
+      content: '♕';
+    }
+
+    .king::before {
+      content: '♔';
+    }
+
+    .pawn::before {
+      content: '♙';
+    }
+
+    .selected {
+      outline: 2px solid yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="board" id="board">
+    <!-- squares are created dynamically with JavaScript -->
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const board = document.getElementById('board');
+      const squares = [];
+      let selectedSquare = null;
+
+      // Function to create the chessboard
+      function createBoard() {
+        let isWhite = true;
+        for (let row = 0; row < 8; row++) {
+          for (let col = 0; col < 8; col++) {
+            const square = document.createElement('div');
+            square.classList.add('square');
+            if (isWhite) {
+              square.classList.add('white');
+            } else {
+              square.classList.add('black');
+            }
+            isWhite = !isWhite;
+            square.dataset.row = row;
+            square.dataset.col = col;
+            squares.push(square);
+            board.appendChild(square);
+          }
+          isWhite = !isWhite;
+        }
+      }
+
+      // Function to create a chess piece
+      function createPiece(color, type) {
+        const piece = document.createElement('div');
+        piece.classList.add('piece');
+        if (color === 'white') {
+          piece.classList.add('white');
+        }
+        piece.classList.add(type);
+        return piece;
+      }
+
+      // Function to add pieces to the board
+      function setupBoard() {
+        // Adding white pieces
+        squares[0].appendChild(createPiece('white', 'rook'));
+        squares[1].appendChild(createPiece('white', 'knight'));
+        squares[2].appendChild(createPiece('white', 'bishop'));
+        squares[3].appendChild(createPiece('white', 'queen'));
+        squares[4].appendChild(createPiece('white', 'king'));
+        squares[5].appendChild(createPiece('white', 'bishop'));
+        squares[6].appendChild(createPiece('white', 'knight'));
+        squares[7].appendChild(createPiece('white', 'rook'));
+        for (let i = 8; i < 16; i++) {
+          squares[i].appendChild(createPiece('white', 'pawn'));
+        }
+        // Adding black pieces
+        squares[56].appendChild(createPiece('black', 'rook'));
+        squares[57].appendChild(createPiece('black', 'knight'));
+        squares[58].appendChild(createPiece('black', 'bishop'));
+        squares[59].appendChild(createPiece('black', 'queen'));
+        squares[60].appendChild(createPiece('black', 'king'));
+        squares[61].appendChild(createPiece('black', 'bishop'));
+        squares[62].appendChild(createPiece('black', 'knight'));
+        squares[63].appendChild(createPiece('black', 'rook'));
+        for (let i = 48; i < 56; i++) {
+          squares[i].appendChild(createPiece('black', 'pawn'));
+        }
+      }
+
+      // Function to handle click on a square
+      function handleSquareClick(event) {
+        const square = event.target;
+        const row = parseInt(square.dataset.row);
+        const col = parseInt(square.dataset.col);
+        
+        if (selectedSquare) {
+          const selectedRow = parseInt(selectedSquare.dataset.row);
+          const selectedCol = parseInt(selectedSquare.dataset.col);
+          if (row === selectedRow && col === selectedCol) {
+            // Deselecting the square
+            selectedSquare.classList.remove('selected');
+            selectedSquare = null;
+            return;
+          }
+          // Move the piece to the new square
+          square.appendChild(selectedSquare.firstElementChild);
+          selectedSquare.classList.remove('selected');
+          selectedSquare = null;
+        } else {
+          if (square.children.length > 0) {
+            // Selecting the square
+            square.classList.add('selected');
+            selectedSquare = square;
+          }
+        }
+      }
+
+      createBoard();
+      setupBoard();
+
+      // Add event listeners to squares
+      squares.forEach(square => {
+        square.addEventListener('click', handleSquareClick);
+      });
+    });
+  </script>
+</body>
+</html>
